@@ -1,0 +1,391 @@
+:root {
+  --bg: #1a1a1a;
+  --fg: #e0e0e0;
+  --accent: #4a9eff;
+  --border: #3a3a3a;
+  --danger: #ff6b6b;
+  --panel-bg: #242424;
+  --input-bg: #2a2a2a;
+  --detail-bg: #2e2e2e;
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --fg: #111111;
+  --accent: #004aad;
+  --border: #cccccc;
+  --danger: #b00020;
+  --panel-bg: #fafafa;
+  --input-bg: #ffffff;
+  --detail-bg: #f6f6f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: "Red Hat Display", sans-serif;
+  font-optical-sizing: auto;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+header {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+button,
+select,
+input {
+  font: inherit;
+}
+
+button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--accent);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: var(--detail-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Fullscreen mode - hide setup panel */
+.fullscreen-mode main {
+  grid-template-columns: 1fr;
+}
+
+.fullscreen-mode .panel {
+  display: none;
+}
+
+.fullscreen-mode .live-clock {
+  font-size: clamp(4rem, 20vw, 12rem);
+}
+
+.fullscreen-mode .clock-label {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  margin-top: 0.5rem;
+}
+
+.fullscreen-mode .display-panel {
+  justify-content: flex-start;
+  min-height: 100%;
+}
+
+.fullscreen-mode .live-clock-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  
+  .panel {
+    max-height: 40vh;
+  }
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  padding: 0.35rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--fg);
+}
+
+input[readonly] {
+  background: var(--detail-bg);
+  color: var(--fg);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.display-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.centre-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.75rem;
+}
+
+.centre-main {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.centre-sub {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.live-clock-wrapper {
+  text-align: center;
+  padding: 1rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+.live-clock {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 1000;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.clock-label {
+  font-size: 0.9rem;
+  color: var(--fg);
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+
+.exam-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 700px) {
+  .exam-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .live-clock {
+    font-size: clamp(2rem, 12vw, 3.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 0.5rem 1rem;
+  }
+  
+  main {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .exam-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-item {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: var(--detail-bg);
+  border: 1px solid var(--border);
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+  margin-bottom: 0.1rem;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  min-height: 1.2em;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.status-pill {
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-pill.running {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.status-pill.idle {
+  opacity: 0.7;
+}
+
+.small-note {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 0.3rem;
+}
+
+.warning {
+  color: var(--danger);
+}
+
+/* Theme toggle switch */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.theme-toggle-label {
+  cursor: pointer;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  border-radius: 24px;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--fg);
+  border-radius: 50%;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--accent);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exam Clock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Exam Clock</h1>
+      <div class="toolbar">
+        <div class="theme-toggle">
+          <span class="theme-toggle-label">🌙</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="theme-toggle" />
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="theme-toggle-label">☀️</span>
+        </div>
+        <button type="button" id="toggle-format" class="secondary">
+          Switch to 12-hour
+        </button>
+        <button type="button" id="toggle-fullscreen" class="secondary">
+          Full Screen
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Setup panel -->
+      <section class="panel">
+        <h2>Exam Setup</h2>
+        <form id="exam-form">
+          <label>
+            Centre Number
+            <input type="text" id="centre-number" required />
+          </label>
+
+          <label>
+            Centre Name
+            <input type="text" id="centre-name" required />
+          </label>
+
+          <label>
+            Exam Board
+            <select id="exam-board" required>
+              <option value="">Select exam board...</option>
+              <option value="AQA">AQA</option>
+              <option value="Edexcel">Edexcel (Pearson)</option>
+              <option value="OCR">OCR</option>
+              <option value="WJEC">WJEC / Eduqas</option>
+              <option value="CCEA">CCEA</option>
+              <option value="Cambridge International">Cambridge International</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label>
+            Subject Title
+            <input type="text" id="subject-title" required />
+          </label>
+
+          <label>
+            Paper Number
+            <input type="text" id="paper-number" required />
+          </label>
+
+          <label>
+            Duration (minutes)
+            <input
+              type="number"
+              id="duration-minutes"
+              min="1"
+              step="1"
+              required
+            />
+          </label>
+
+          <label>
+            Actual Start Time
+            <input type="text" id="actual-start" readonly placeholder="Not started" />
+          </label>
+
+          <label>
+            Actual End Time
+            <input type="text" id="actual-end" readonly placeholder="Not started" />
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" id="start-exam">Start Exam</button>
+            <button type="button" id="reset-exam" class="secondary">
+              Reset
+            </button>
+          </div>
+          <p class="small-note warning">
+            This tool displays the current time only. It is not a countdown or elapsed timer.
+            Always ensure use complies with the latest JCQ regulations and your centre policies.
+          </p>
+        </form>
+      </section>
+
+      <!-- Display panel -->
+      <section class="display-panel">
+        <div class="centre-info">
+          <div>
+            <div class="centre-main" id="display-centre-name">
+              Centre Name
+            </div>
+            <div class="centre-sub" id="display-centre-number">
+              Centre Number
+            </div>
+          </div>
+          <div class="centre-sub" id="display-exam-board">
+            Exam Board
+          </div>
+        </div>
+
+        <div class="live-clock-wrapper">
+          <div class="live-clock" id="live-clock">
+            --:--:--
+          </div>
+          <div class="clock-label" id="clock-format-label">
+            Current Time
+          </div>
+        </div>
+
+        <div class="exam-details-grid">
+          <div class="detail-item">
+            <div class="detail-label">Subject</div>
+            <div class="detail-value" id="display-subject">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Paper</div>
+            <div class="detail-value" id="display-paper">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Duration</div>
+            <div class="detail-value" id="display-duration">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Actual Start</div>
+            <div class="detail-value" id="display-start">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Actual End</div>
+            <div class="detail-value" id="display-end">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+              <span class="status-pill idle" id="status-pill">
+                Not started
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="small-note">
+            The clock shows the real time only. It does not count down or track elapsed time.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
