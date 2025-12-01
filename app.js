@@ -178,7 +178,9 @@ examForm.addEventListener("submit", (event) => {
 
   // Update display fields
   centreNameDisplay.textContent = centreName || "Centre Name";
-  centreNumberDisplay.textContent = centreNumber || "Centre Number";
+  centreNumberDisplay.innerHTML = centreNumber 
+    ? `Centre Number: <strong>${centreNumber}</strong>` 
+    : "Centre Number";
   examBoardDisplay.textContent = examBoard || "Exam Board";
 
   subjectDisplay.textContent = subject || "-";
