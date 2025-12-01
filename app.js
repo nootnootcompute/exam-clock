@@ -64,6 +64,13 @@ const examForm = document.getElementById("exam-form");
 const startExamBtn = document.getElementById("start-exam");
 const resetExamBtn = document.getElementById("reset-exam");
 
+// Validate centre number input - only allow numbers
+if (centreNumberInput) {
+  centreNumberInput.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+  });
+}
+
 // Utility
 function pad(num) {
   return num.toString().padStart(2, "0");
@@ -74,7 +81,7 @@ function formatDuration(minutes) {
   
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  
+    
   if (hours === 0) {
     return `${mins} Minute${mins !== 1 ? 's' : ''}`;
   } else if (mins === 0) {
@@ -181,7 +188,9 @@ examForm.addEventListener("submit", (event) => {
   centreNumberDisplay.innerHTML = centreNumber 
     ? `Centre Number: <strong>${centreNumber}</strong>` 
     : "Centre Number";
-  examBoardDisplay.textContent = examBoard || "Exam Board";
+  examBoardDisplay.innerHTML = examBoard 
+    ? `Exam Board: <strong>${examBoard}</strong>` 
+    : "Exam Board";
 
   subjectDisplay.textContent = subject || "-";
   paperDisplay.textContent = paper || "-";
