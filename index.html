@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Exam Clock</title>
+  <title>InvigiClock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +13,7 @@
 <body>
   <div class="app">
     <header>
-      <h1>Exam Clock</h1>
+      <img src="assets/InvigiClock Logo WHITE.png" alt="InvigiClock" class="header-logo" id="header-logo" />
       <div class="toolbar">
         <div class="theme-toggle">
           <span class="theme-toggle-label">🌙</span>
@@ -28,6 +29,9 @@
         <button type="button" id="toggle-fullscreen" class="secondary">
           Full Screen
         </button>
+        <button type="button" id="open-settings" class="secondary">
+          ⚙️ Settings
+        </button>
       </div>
     </header>
 
@@ -37,18 +41,8 @@
         <h2>Exam Setup</h2>
         <form id="exam-form">
           <label>
-            Centre Number
-            <input type="text" id="centre-number" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 12345" />
-          </label>
-
-          <label>
-            Centre Name
-            <input type="text" id="centre-name" required />
-          </label>
-
-          <label>
             Exam Board
-            <select id="exam-board" required>
+            <select id="exam-board">
               <option value="">Select exam board...</option>
               <option value="AQA">AQA</option>
               <option value="Edexcel">Edexcel (Pearson)</option>
@@ -81,42 +75,29 @@
             />
           </label>
 
-          <label>
-            Actual Start Time
-            <input type="text" id="actual-start" readonly placeholder="Not started" />
-          </label>
-
-          <label>
-            Actual End Time
-            <input type="text" id="actual-end" readonly placeholder="Not started" />
-          </label>
-
           <div class="form-actions">
-            <button type="submit" id="start-exam">Start Exam</button>
-            <button type="button" id="reset-exam" class="secondary">
-              Reset
+            <button type="submit" id="start-exam">Add Exam</button>
+            <button type="button" id="clear-all-exams" class="secondary">
+              Clear All
             </button>
           </div>
-          <p class="small-note warning">
-            This tool displays the current time only. It is not a countdown or elapsed timer.
-            Always ensure use complies with the latest JCQ regulations and your centre policies.
-          </p>
+          <button type="button" id="open-disclaimer" class="disclaimer-btn secondary">
+            ⚠️ Disclaimer
+          </button>
         </form>
       </section>
 
       <!-- Display panel -->
       <section class="display-panel">
-        <div class="centre-info">
+        <div class="centre-info" id="centre-info-display">
+          <img id="centre-logo" class="centre-logo" alt="Centre logo" style="display: none;" />
           <div>
             <div class="centre-main" id="display-centre-number">
-              Centre Number
+              Centre
             </div>
             <div class="centre-sub" id="display-centre-name">
-              Centre Name
+              Not configured
             </div>
-          </div>
-          <div class="centre-sub" id="display-exam-board">
-            Exam Board
           </div>
         </div>
 
@@ -129,44 +110,80 @@
           </div>
         </div>
 
-        <div class="exam-details-grid">
-          <div class="detail-item">
-            <div class="detail-label">Subject</div>
-            <div class="detail-value" id="display-subject">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Paper</div>
-            <div class="detail-value" id="display-paper">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Duration</div>
-            <div class="detail-value" id="display-duration">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Actual Start</div>
-            <div class="detail-value" id="display-start">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Actual End</div>
-            <div class="detail-value" id="display-end">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Status</div>
-            <div class="detail-value">
-              <span class="status-pill idle" id="status-pill">
-                Not started
-              </span>
-            </div>
+        <div class="exams-list" id="exams-list">
+          <div class="no-exams-message">
+            No exams added yet. Use the form to add exam information.
           </div>
         </div>
 
         <div class="status-row">
           <div class="small-note">
-            The clock shows the real time only. It does not count down or track elapsed time.
+            <strong>InvigiClock</strong> shows the real time only as per JCQ regulations. It does not count down or track elapsed time.
           </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Disclaimer Modal -->
+  <div class="modal-overlay" id="disclaimer-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>⚠️ Disclaimer</h2>
+        <button class="modal-close" id="close-disclaimer">×</button>
+      </div>
+      <div class="disclaimer-content">
+        <p>
+          <strong>InvigiClock</strong> displays the current time only. It is not a countdown or elapsed timer.
+        </p>
+        <p>
+          Always ensure use complies with the latest JCQ regulations and your centre policies. <strong>InvigiClock</strong> does not accept responsibility for centre compliance and malpractice as a result of failure to adhere to JCQ regulations.
+        </p>
+        <p>
+          Please always check the latest copy of "Instructions for conducting examinations" from the JCQ website.
+        </p>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="close-disclaimer-btn" class="secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="modal-close" id="close-settings">×</button>
+      </div>
+      <form id="settings-form">
+        <label>
+          Centre Number
+          <input type="text" id="settings-centre-number" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 12345" />
+        </label>
+
+        <label>
+          Centre Name
+          <input type="text" id="settings-centre-name" placeholder="Enter centre name" />
+        </label>
+
+        <label>
+          Centre/School Logo
+          <input type="file" id="settings-logo" accept="image/*" />
+          <span class="file-note">Upload a logo image (JPG, PNG, SVG)</span>
+        </label>
+
+        <div id="logo-preview-container" class="logo-preview-container" style="display: none;">
+          <img id="logo-preview" class="logo-preview" alt="Logo preview" />
+          <button type="button" id="remove-logo" class="secondary small-btn">Remove Logo</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="save-settings">Save Settings</button>
+          <button type="button" id="cancel-settings" class="secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="app.js"></script>

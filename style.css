@@ -54,10 +54,10 @@ header {
   flex-shrink: 0;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
+.header-logo {
+  height: 2.5rem;
+  max-width: 200px;
+  object-fit: contain;
 }
 
 .toolbar {
@@ -205,14 +205,27 @@ input[readonly] {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 0.5rem 1rem;
   border-bottom: 1px solid var(--border);
   padding-bottom: 0.75rem;
 }
 
+.centre-logo {
+  max-height: 60px;
+  max-width: 120px;
+  object-fit: contain;
+  margin-right: 1rem;
+}
+
+.centre-logo ~ div {
+  text-align: right;
+  margin-left: auto;
+}
+
 .centre-main {
   font-size: 1.4rem;
-  font-weight: 600;
+  font-weight: 60Ca0;
 }
 
 .centre-sub {
@@ -389,3 +402,241 @@ input[readonly] {
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(20px);
 }
+
+/* Exams list */
+.exams-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.no-exams-message {
+  text-align: center;
+  padding: 2rem 1rem;
+  opacity: 0.6;
+  font-size: 0.95rem;
+}
+
+.exam-card {
+  background: var(--detail-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.exam-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.exam-title {
+  flex: 1;
+}
+
+.exam-subject {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.exam-paper {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.remove-exam-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--danger);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-exam-btn:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.exam-times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.exam-time-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.time-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+.time-value {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.exam-status {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.status-pill.complete {
+  border-color: #4caf50;
+  color: #4caf50;
+  opacity: 0.8;
+}
+
+/* Settings Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+#settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#settings-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+}
+
+#settings-form input {
+  padding: 0.5rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+#settings-form .form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.file-note {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.logo-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--detail-bg);
+}
+
+.logo-preview {
+  max-width: 200px;
+  max-height: 100px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.small-btn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.disclaimer-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.disclaimer-content {
+  line-height: 1.6;
+}
+
+.disclaimer-content p {
+  margin: 0 0 1rem 0;
+}
+
+.disclaimer-content p:last-child {
+  margin-bottom: 0;
+}
+
