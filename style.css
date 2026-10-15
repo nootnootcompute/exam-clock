@@ -2,6 +2,7 @@
   --bg: #1a1a1a;
   --fg: #e0e0e0;
   --accent: #4a9eff;
+  --warn: #ffb14a;
   --border: #3a3a3a;
   --danger: #ff6b6b;
   --panel-bg: #242424;
@@ -13,6 +14,7 @@
   --bg: #ffffff;
   --fg: #111111;
   --accent: #004aad;
+  --warn: #dd8513;
   --border: #cccccc;
   --danger: #b00020;
   --panel-bg: #fafafa;
@@ -58,6 +60,32 @@ header {
   height: 2.5rem;
   max-width: 200px;
   object-fit: contain;
+}
+
+/* Exam in progress banner */
+.exam-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding: 0.45rem 1.5rem;
+  background: #c62828;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.exam-banner[hidden] {
+  display: none;
+}
+
+.fullscreen-mode .exam-banner {
+  font-size: clamp(1.125rem, 3vw, 2.25rem);
+  padding: 0.5625rem 1.5rem;
 }
 
 .toolbar {
@@ -171,6 +199,7 @@ label {
 
 input[type="text"],
 input[type="number"],
+input[type="time"],
 select {
   padding: 0.35rem 0.45rem;
   border-radius: 4px;
@@ -182,6 +211,84 @@ select {
 input[readonly] {
   background: var(--detail-bg);
   color: var(--fg);
+}
+
+[data-theme="light"] input[type="time"] {
+  color-scheme: light;
+}
+
+input[type="time"] {
+  color-scheme: dark;
+}
+
+.input-with-action {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.input-with-action input {
+  flex: 1;
+  min-width: 0;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.field-row label {
+  min-width: 0;
+}
+
+label.check-option {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.extra-time-group {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 0;
+}
+
+.extra-time-group legend {
+  font-size: 0.9rem;
+  padding: 0 0.3rem;
+}
+
+.timing-preview {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  background: var(--detail-bg);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.timing-preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.timing-preview-label {
+  opacity: 0.7;
 }
 
 .form-actions {
@@ -240,7 +347,6 @@ input[readonly] {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 0;
 }
 
 .live-clock {
@@ -311,14 +417,6 @@ input[readonly] {
   min-height: 1.2em;
 }
 
-.status-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  margin-top: 0.4rem;
-}
-
 .status-pill {
   padding: 0.2rem 0.7rem;
   border-radius: 999px;
@@ -329,8 +427,8 @@ input[readonly] {
 }
 
 .status-pill.running {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--warn);
+  color: var(--warn);
 }
 
 .status-pill.idle {
@@ -409,6 +507,8 @@ input[readonly] {
   flex-direction: column;
   gap: 1rem;
   margin-top: 0.5rem;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .no-exams-message {
@@ -467,6 +567,90 @@ input[readonly] {
   color: white;
 }
 
+.exam-card-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.late-exam-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.late-exam-btn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.late-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border);
+}
+
+.late-candidate {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.late-candidate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.late-candidate-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.late-tag {
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.remove-late-btn {
+  font-size: 1.1rem;
+  padding: 0.05rem 0.45rem;
+}
+
+.late-exam-summary {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  overflow-wrap: anywhere;
+}
+
+#late-form {
+  gap: 1rem;
+}
+
 .exam-times {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -494,13 +678,34 @@ input[readonly] {
 
 .exam-status {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .status-pill.complete {
   border-color: #4caf50;
   color: #4caf50;
   opacity: 0.8;
+}
+
+.status-pill.upcoming {
+  border-color: var(--border);
+  opacity: 0.8;
+}
+
+.exam-extra-times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--border);
+  font-size: 0.9rem;
+}
+
+.exam-extra-times .time-label {
+  color: var(--accent);
+  opacity: 1;
 }
 
 /* Settings Modal */
@@ -624,8 +829,12 @@ input[readonly] {
 
 .disclaimer-btn {
   width: 100%;
-  margin-top: 0.5rem;
   font-size: 0.85rem;
+}
+
+/* The disclaimer opens from within Settings, so it has to sit above that modal */
+#disclaimer-modal {
+  z-index: 1100;
 }
 
 .disclaimer-content {

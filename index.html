@@ -35,6 +35,11 @@
       </div>
     </header>
 
+    <div class="exam-banner" id="exam-in-progress-banner" role="status" aria-live="polite" hidden>
+      <span class="exam-banner-icon" aria-hidden="true">⚠️</span>
+      <span class="exam-banner-text">Exam in Progress - Silence Please</span>
+    </div>
+
     <main>
       <!-- Setup panel -->
       <section class="panel">
@@ -44,8 +49,9 @@
             Exam Board
             <select id="exam-board">
               <option value="">Select exam board...</option>
+              <option value="Mock">Internal / Mock</option>
               <option value="AQA">AQA</option>
-              <option value="Edexcel">Edexcel (Pearson)</option>
+              <option value="Edexcel">Pearson Edexcel</option>
               <option value="OCR">OCR</option>
               <option value="WJEC">WJEC / Eduqas</option>
               <option value="CCEA">CCEA</option>
@@ -64,26 +70,59 @@
             <input type="text" id="paper-number" required />
           </label>
 
-          <label>
-            Duration (minutes)
-            <input
-              type="number"
-              id="duration-minutes"
-              min="1"
-              step="1"
-              required
-            />
+          <div class="field-group">
+            <label for="start-time">Start Time</label>
+            <div class="input-with-action">
+              <input type="time" id="start-time" required />
+              <button type="button" id="start-now" class="secondary small-btn" title="Set start time to the current time">
+                Now
+              </button>
+            </div>
+          </div>
+
+          <label class="check-option">
+            <input type="checkbox" id="calc-from-duration" checked />
+            Calculate end time from duration
           </label>
+
+          <div class="field-row">
+            <label>
+              Duration (minutes)
+              <input
+                type="number"
+                id="duration-minutes"
+                min="1"
+                step="1"
+                inputmode="numeric"
+              />
+            </label>
+
+            <label>
+              End Time
+              <input type="time" id="end-time" readonly />
+            </label>
+          </div>
+
+          <fieldset class="extra-time-group">
+            <legend>Extra time (JCQ access arrangements)</legend>
+            <label class="check-option">
+              <input type="checkbox" id="extra-25" />
+              25% extra time
+            </label>
+            <label class="check-option">
+              <input type="checkbox" id="extra-50" />
+              50% extra time
+            </label>
+          </fieldset>
+
+          <div class="timing-preview" id="timing-preview" aria-live="polite"></div>
 
           <div class="form-actions">
             <button type="submit" id="start-exam">Add Exam</button>
             <button type="button" id="clear-all-exams" class="secondary">
-              Clear All
+              Clear Setup
             </button>
           </div>
-          <button type="button" id="open-disclaimer" class="disclaimer-btn secondary">
-            ⚠️ Disclaimer
-          </button>
         </form>
       </section>
 
@@ -112,13 +151,7 @@
 
         <div class="exams-list" id="exams-list">
           <div class="no-exams-message">
-            No exams added yet. Use the form to add exam information.
-          </div>
-        </div>
-
-        <div class="status-row">
-          <div class="small-note">
-            <strong>InvigiClock</strong> shows the real time only as per JCQ regulations. It does not count down or track elapsed time.
+            No exams added yet. Use the Exam Setup panel to add exam information.
           </div>
         </div>
       </section>
@@ -178,9 +211,63 @@
           <button type="button" id="remove-logo" class="secondary small-btn">Remove Logo</button>
         </div>
 
+        <div class="small-note">
+          <strong>InvigiClock</strong> shows the real time only as per JCQ regulations. It does not count down or track elapsed time.
+        </div>
+
+        <button type="button" id="open-disclaimer" class="disclaimer-btn secondary">
+          ⚠️ Disclaimer
+        </button>
+
         <div class="form-actions">
           <button type="submit" id="save-settings">Save Settings</button>
           <button type="button" id="cancel-settings" class="secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Late Candidate Modal -->
+  <div class="modal-overlay" id="late-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Late Arriving Candidate</h2>
+        <button type="button" class="modal-close" id="close-late" aria-label="Close">×</button>
+      </div>
+      <p class="late-exam-summary" id="late-exam-summary"></p>
+      <form id="late-form">
+        <label>
+          Candidate Number / Name
+          <input type="text" id="late-candidate" maxlength="60" autocomplete="off" required />
+        </label>
+
+        <div class="field-group">
+          <label for="late-start-time">Start Time</label>
+          <div class="input-with-action">
+            <input type="time" id="late-start-time" required />
+            <button type="button" id="late-start-now" class="secondary small-btn" title="Set start time to the current time">
+              Now
+            </button>
+          </div>
+        </div>
+
+        <fieldset class="extra-time-group">
+          <legend>Extra time (JCQ access arrangements)</legend>
+          <label class="check-option">
+            <input type="checkbox" id="late-extra-25" />
+            25% extra time
+          </label>
+          <label class="check-option">
+            <input type="checkbox" id="late-extra-50" />
+            50% extra time
+          </label>
+        </fieldset>
+
+        <div class="timing-preview" id="late-preview" aria-live="polite"></div>
+
+        <div class="form-actions">
+          <button type="submit" id="add-late">Add Candidate</button>
+          <button type="button" id="cancel-late" class="secondary">Cancel</button>
         </div>
       </form>
     </div>
