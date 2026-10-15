@@ -340,10 +340,11 @@ label.check-option {
   opacity: 0.85;
 }
 
+/* The clock area and the exams area each get half of the height left under the centre info */
 .live-clock-wrapper {
   text-align: center;
-  padding: 1rem 0;
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -351,6 +352,7 @@ label.check-option {
 
 .live-clock {
   font-size: clamp(2.5rem, 8vw, 4rem);
+  line-height: 1;
   font-weight: 1000;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
@@ -418,10 +420,10 @@ label.check-option {
 }
 
 .status-pill {
-  padding: 0.2rem 0.7rem;
+  padding: 0.2em 0.7em;
   border-radius: 999px;
   border: 1px solid var(--border);
-  font-size: 0.8rem;
+  font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -503,12 +505,61 @@ label.check-option {
 
 /* Exams list */
 .exams-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Windowed (setup panel visible): the exams area may take more than its half when the cards
+   need the room. The clock area keeps what it needs; its type size is never reduced. */
+@media (min-width: 901px) {
+  body:not(.fullscreen-mode) .live-clock-wrapper,
+  body:not(.fullscreen-mode) .exams-list {
+    min-height: min-content;
+  }
+}
+
+/* Exams split into side-by-side columns (1 exam = 1 column ... 4 exams = 4 columns).
+   The grid fills its half of the panel; spare height goes to each card's details row,
+   which keeps the status pills pinned toward the bottom of the card. */
+.exams-grid {
+  --exam-cols: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--exam-cols), minmax(0, 1fr));
+  grid-auto-rows: 1fr auto;
+  gap: 0.75rem 1rem;
+  flex: 1 0 auto;
+  /* All card text is sized in em, so this one multiplier (set by fitExamText in app.js) scales it together */
+  font-size: calc(1rem * var(--exam-scale, 1));
+}
+
+.exams-grid[data-count="2"] { --exam-cols: 2; }
+.exams-grid[data-count="3"] { --exam-cols: 3; }
+.exams-grid[data-count="4"] { --exam-cols: 4; }
+
+.exams-grid:not([data-count="1"]) .exam-card {
+  padding: 0.75rem;
+}
+
+.exams-grid:not([data-count="1"]) .exam-card-details,
+.exams-grid:not([data-count="1"]) .exam-card-footer {
+  gap: 0.5rem;
+}
+
+/* Fewer columns when the display area is narrow, so each card stays readable */
+@container (max-width: 760px) {
+  .exams-grid[data-count="4"] { --exam-cols: 2; }
+}
+
+@container (max-width: 600px) {
+  .exams-grid[data-count="3"] { --exam-cols: 2; }
+}
+
+@container (max-width: 440px) {
+  .exams-grid[data-count] { --exam-cols: 1; }
 }
 
 .no-exams-message {
@@ -518,14 +569,27 @@ label.check-option {
   font-size: 0.95rem;
 }
 
+/* Each card spans two rows of the exams grid (details, then footer). Cards in the same
+   row share those rows, so every card's status pills start at the same height. */
 .exam-card {
   background: var(--detail-bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+}
+
+/* The containers live on the inner blocks (not the card itself) because the card is a subgrid */
+.exam-card-details,
+.exam-card-footer {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
+  container-type: inline-size;
 }
 
 .exam-card-header {
@@ -537,16 +601,18 @@ label.check-option {
 
 .exam-title {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .exam-subject {
-  font-size: 1.1rem;
+  font-size: 1.1em;
   font-weight: 600;
   margin-bottom: 0.25rem;
 }
 
 .exam-paper {
-  font-size: 0.9rem;
+  font-size: 0.9em;
   opacity: 0.8;
 }
 
@@ -554,12 +620,12 @@ label.check-option {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--danger);
-  font-size: 1.5rem;
+  font-size: 1.5em;
   line-height: 1;
-  padding: 0.2rem 0.6rem;
+  padding: 0.2em 0.6em;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .remove-exam-btn:hover {
@@ -580,10 +646,15 @@ label.check-option {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--accent);
-  padding: 0.2rem 0.6rem;
+  padding: 0.2em 0.6em;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.late-exam-btn svg {
+  width: 1.25em;
+  height: 1.25em;
 }
 
 .late-exam-btn:hover {
@@ -625,19 +696,19 @@ label.check-option {
 }
 
 .late-tag {
-  padding: 0.05rem 0.45rem;
+  padding: 0.05em 0.45em;
   border: 1px solid var(--accent);
   border-radius: 999px;
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: 0.7em;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .remove-late-btn {
-  font-size: 1.1rem;
-  padding: 0.05rem 0.45rem;
+  font-size: 1.1em;
+  padding: 0.05em 0.45em;
 }
 
 .late-exam-summary {
@@ -653,9 +724,9 @@ label.check-option {
 
 .exam-times {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(9.5em, 1fr));
   gap: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 
 .exam-time-item {
@@ -664,8 +735,9 @@ label.check-option {
   gap: 0.15rem;
 }
 
+/* 0.8333em of the 0.9em time text = the original 0.75rem label size */
 .time-label {
-  font-size: 0.75rem;
+  font-size: 0.8333em;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   opacity: 0.7;
@@ -679,7 +751,7 @@ label.check-option {
 .exam-status {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 0.5rem;
 }
 
@@ -696,16 +768,62 @@ label.check-option {
 
 .exam-extra-times {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(9.5em, 1fr));
   gap: 0.5rem;
   padding-top: 0.6rem;
   border-top: 1px dashed var(--border);
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 
 .exam-extra-times .time-label {
   color: var(--accent);
   opacity: 1;
+}
+
+/* Narrow cards (several exams side by side): label and value share a line to save height.
+   Thresholds are in em so they widen along with the text scale. */
+@container (max-width: 25em) {
+  .exam-times,
+  .exam-extra-times {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .exam-time-item {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    column-gap: 0.5rem;
+  }
+
+  .status-pill {
+    text-align: center;
+    padding: 0.2em 0.5em;
+    font-size: 0.72em;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Very narrow cards: buttons go above the title so the subject keeps the full width */
+@container (max-width: 14.4em) {
+  .exam-card-header {
+    flex-direction: column-reverse;
+    gap: 0.35rem;
+  }
+
+  .exam-title {
+    flex: none;
+  }
+
+  .exam-card-actions {
+    align-self: flex-end;
+  }
+
+  .exam-card-actions .remove-exam-btn {
+    font-size: 1.2em;
+    padding: 0.1em 0.5em;
+  }
 }
 
 /* Settings Modal */

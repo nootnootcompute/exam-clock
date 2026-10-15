@@ -627,6 +627,8 @@ function lateCandidatesHtml(exam, now) {
         </div>`;
 }
 
+const MAX_EXAM_COLUMNS = 4;
+
 // Render exams list
 function renderExams() {
   const now = new Date();
@@ -645,42 +647,88 @@ function renderExams() {
     (a, b) => a.startTime - b.startTime || a.id - b.id
   );
 
-  examsListEl.innerHTML = sortedExams.map(exam => {
+  const examCardsHtml = sortedExams.map(exam => {
     exam.statusKey = getExamStatusKey(exam, now);
 
     return `
       <div class="exam-card" data-exam-id="${exam.id}">
-        <div class="exam-card-header">
-          <div class="exam-title">
-            <div class="exam-subject">${escapeHtml(exam.subject)}</div>
-            <div class="exam-paper">${escapeHtml(exam.paper)}</div>
+        <div class="exam-card-details">
+          <div class="exam-card-header">
+            <div class="exam-title">
+              <div class="exam-subject">${escapeHtml(exam.subject)}</div>
+              <div class="exam-paper">${escapeHtml(exam.paper)}</div>
+            </div>
+            <div class="exam-card-actions">
+              <button class="late-exam-btn" onclick="openLateCandidateModal(${exam.id})" title="Add late arriving candidate" aria-label="Add late arriving candidate">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <line x1="19" y1="8" x2="19" y2="14"></line>
+                  <line x1="16" y1="11" x2="22" y2="11"></line>
+                </svg>
+              </button>
+              <button class="remove-exam-btn" onclick="removeExam(${exam.id})" title="Remove exam" aria-label="Remove exam">×</button>
+            </div>
           </div>
-          <div class="exam-card-actions">
-            <button class="late-exam-btn" onclick="openLateCandidateModal(${exam.id})" title="Add late arriving candidate" aria-label="Add late arriving candidate">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <line x1="19" y1="8" x2="19" y2="14"></line>
-                <line x1="16" y1="11" x2="22" y2="11"></line>
-              </svg>
-            </button>
-            <button class="remove-exam-btn" onclick="removeExam(${exam.id})" title="Remove exam" aria-label="Remove exam">×</button>
+          <div class="exam-times">
+            ${timeItemHtml("Start", exam.startTime)}
+            ${timeItemHtml("End", exam.endTime)}
+            <div class="exam-time-item">
+              <span class="time-label">Duration:</span>
+              <span class="time-value">${formatDuration(exam.duration)}</span>
+            </div>
           </div>
+          ${extraTimesHtml(exam)}
         </div>
-        <div class="exam-times">
-          ${timeItemHtml("Start", exam.startTime)}
-          ${timeItemHtml("End", exam.endTime)}
-          <div class="exam-time-item">
-            <span class="time-label">Duration:</span>
-            <span class="time-value">${formatDuration(exam.duration)}</span>
-          </div>
+        <div class="exam-card-footer">
+          <div class="exam-status">${statusPillsHtml(exam, now)}</div>
+          ${lateCandidatesHtml(exam, now)}
         </div>
-        ${extraTimesHtml(exam)}
-        <div class="exam-status">${statusPillsHtml(exam, now)}</div>
-        ${lateCandidatesHtml(exam, now)}
       </div>
     `;
   }).join('');
+
+  // Cards sit side by side, one column per exam up to MAX_EXAM_COLUMNS, then wrap onto further rows
+  const columnCount = Math.min(sortedExams.length, MAX_EXAM_COLUMNS);
+  examsListEl.innerHTML = `<div class="exams-grid" data-count="${columnCount}">${examCardsHtml}</div>`;
+  fitExamText();
+}
+
+// Exam text is as large as possible, for reading from a distance, while the cards still fit
+// without scrolling: a single exam gets very large text, four share what the space allows.
+const EXAM_TEXT_SCALE_MIN = 1;
+const EXAM_TEXT_SCALE_MAX = 2.5;
+
+function fitExamText() {
+  if (!examsListEl.querySelector(".exams-grid")) return;
+
+  const fits = scale => {
+    examsListEl.style.setProperty("--exam-scale", scale);
+    return examsListEl.scrollHeight <= examsListEl.clientHeight + 1
+      && examsListEl.scrollWidth <= examsListEl.clientWidth + 1;
+  };
+
+  // Measure against the plain half-height share. In windowed mode the exams area may otherwise
+  // grow to fit its content, which would let the text grow forever and squeeze the clock.
+  examsListEl.style.minHeight = "0";
+
+  let best = EXAM_TEXT_SCALE_MIN;
+  if (fits(EXAM_TEXT_SCALE_MAX)) {
+    best = EXAM_TEXT_SCALE_MAX;
+  } else {
+    let high = EXAM_TEXT_SCALE_MAX;
+    for (let i = 0; i < 7; i++) {
+      const mid = (best + high) / 2;
+      if (fits(mid)) {
+        best = mid;
+      } else {
+        high = mid;
+      }
+    }
+  }
+
+  examsListEl.style.minHeight = "";
+  examsListEl.style.setProperty("--exam-scale", best.toFixed(3));
 }
 
 const EXAMS_STORAGE_KEY = "exams";
@@ -996,6 +1044,21 @@ examIdCounter = nextExamId();
 saveExams();
 renderExams();
 syncTimingFields();
+
+// Re-fit the exam text whenever the exams area changes size (window resize, entering or leaving
+// full screen, the exam banner appearing) or once the web font has loaded and changed text widths
+if (typeof ResizeObserver === "function") {
+  let fitQueued = false;
+  new ResizeObserver(() => {
+    if (fitQueued) return;
+    fitQueued = true;
+    requestAnimationFrame(() => {
+      fitQueued = false;
+      fitExamText();
+    });
+  }).observe(examsListEl);
+}
+document.fonts?.ready.then(fitExamText);
 
 // Keep other open tabs in step. The storage event only fires in tabs other than the one
 // that made the change, and loading never writes back, so this can't loop.
